@@ -1,0 +1,105 @@
+{
+	"name": "AI report → EveryPage tracked link",
+	"nodes": [
+		{
+			"parameters": {
+				"content": "## AI report → tracked link\nEvery Monday an AI agent writes the weekly ops report, a Code node renders it to a PDF (no dependencies), and EveryPage turns it into a **tracked share link** — so you know whether anyone actually read what the agent produced.\n\nSwap the Slack step for email, Teams, or your CRM. Add `requireEmail: true` in the EveryPage node's options to gate the report (Pro).",
+				"height": 260,
+				"width": 420
+			},
+			"id": "a1b2c3d4-0000-4000-8000-000000000001",
+			"name": "Sticky Note",
+			"type": "n8n-nodes-base.stickyNote",
+			"typeVersion": 1,
+			"position": [-220, -180]
+		},
+		{
+			"parameters": {
+				"rule": {
+					"interval": [{ "field": "weeks", "triggerAtDay": [1], "triggerAtHour": 8 }]
+				}
+			},
+			"id": "a1b2c3d4-0000-4000-8000-000000000002",
+			"name": "Every Monday 08:00",
+			"type": "n8n-nodes-base.scheduleTrigger",
+			"typeVersion": 1.2,
+			"position": [-220, 60]
+		},
+		{
+			"parameters": {
+				"promptType": "define",
+				"text": "Write this week's operations report for the team: a short executive summary, then sections for shipped work, metrics, risks, and next week's focus. Plain text, no markdown syntax. Around 500 words.",
+				"options": {}
+			},
+			"id": "a1b2c3d4-0000-4000-8000-000000000003",
+			"name": "AI Agent",
+			"type": "@n8n/n8n-nodes-langchain.agent",
+			"typeVersion": 1.7,
+			"position": [0, 60]
+		},
+		{
+			"parameters": {
+				"model": { "__rl": true, "value": "gpt-4.1-mini", "mode": "list" },
+				"options": {}
+			},
+			"id": "a1b2c3d4-0000-4000-8000-000000000004",
+			"name": "OpenAI Chat Model",
+			"type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+			"typeVersion": 1.2,
+			"position": [0, 260]
+		},
+		{
+			"parameters": {
+				"mode": "runOnceForAllItems",
+				"jsCode": "// Render plain text to a minimal, valid, multi-page PDF - no dependencies.\nconst esc = (s) => s.replace(/\\\\/g, '\\\\\\\\').replace(/\\(/g, '\\\\(').replace(/\\)/g, '\\\\)');\nconst text = String($input.first().json.output ?? $input.first().json.text ?? 'Empty report');\n\nconst lines = [];\nfor (const raw of text.split('\\n')) {\n  let line = raw.replace(/[^\\x20-\\x7e]/g, '');\n  if (line === '') { lines.push(''); continue; }\n  while (line.length > 92) { lines.push(line.slice(0, 92)); line = line.slice(92); }\n  lines.push(line);\n}\nconst pages = [];\nfor (let i = 0; i < lines.length; i += 46) pages.push(lines.slice(i, i + 46));\nif (!pages.length) pages.push(['(empty)']);\n\nconst pageCount = pages.length;\nconst fontObj = 3 + pageCount * 2;\nconst objects = [];\nobjects[1] = '<< /Type /Catalog /Pages 2 0 R >>';\nobjects[2] = `<< /Type /Pages /Kids [${pages.map((_, p) => `${3 + p * 2} 0 R`).join(' ')}] /Count ${pageCount} >>`;\npages.forEach((pg, p) => {\n  const contentObj = 4 + p * 2;\n  objects[3 + p * 2] = `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 ${fontObj} 0 R >> >> /Contents ${contentObj} 0 R >>`;\n  let stream = 'BT /F1 11 Tf 56 780 Td 16 TL\\n';\n  for (const line of pg) stream += `(${esc(line)}) Tj T*\\n`;\n  stream += 'ET';\n  objects[contentObj] = `<< /Length ${stream.length} >>\\nstream\\n${stream}\\nendstream`;\n});\nobjects[fontObj] = '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>';\n\nlet pdf = '%PDF-1.4\\n';\nconst offsets = [];\nfor (let n = 1; n <= fontObj; n++) {\n  offsets[n] = pdf.length;\n  pdf += `${n} 0 obj\\n${objects[n]}\\nendobj\\n`;\n}\nconst xref = pdf.length;\npdf += `xref\\n0 ${fontObj + 1}\\n0000000000 65535 f \\n`;\nfor (let n = 1; n <= fontObj; n++) pdf += `${String(offsets[n]).padStart(10, '0')} 00000 n \\n`;\npdf += `trailer\\n<< /Size ${fontObj + 1} /Root 1 0 R >>\\nstartxref\\n${xref}\\n%%EOF`;\n\nconst fileName = `weekly-report-${new Date().toISOString().slice(0, 10)}.pdf`;\nconst binaryData = await this.helpers.prepareBinaryData(Buffer.from(pdf, 'latin1'), fileName, 'application/pdf');\nreturn [{ json: { fileName }, binary: { data: binaryData } }];"
+			},
+			"id": "a1b2c3d4-0000-4000-8000-000000000005",
+			"name": "Render PDF",
+			"type": "n8n-nodes-base.code",
+			"typeVersion": 2,
+			"position": [280, 60]
+		},
+		{
+			"parameters": {
+				"resource": "file",
+				"operation": "upload",
+				"binaryPropertyName": "data",
+				"filename": "={{ $json.fileName }}",
+				"options": {
+					"viewerMode": "flipbook",
+					"notifyOnView": true,
+					"expiryHours": 168
+				}
+			},
+			"id": "a1b2c3d4-0000-4000-8000-000000000006",
+			"name": "EveryPage",
+			"type": "n8n-nodes-everypage.everyPage",
+			"typeVersion": 1,
+			"position": [560, 60]
+		},
+		{
+			"parameters": {
+				"select": "channel",
+				"text": "=📄 This week's report is live: {{ $json.shareUrl }}\nEveryPage will tell us who actually reads it.",
+				"otherOptions": {}
+			},
+			"id": "a1b2c3d4-0000-4000-8000-000000000007",
+			"name": "Post link to Slack",
+			"type": "n8n-nodes-base.slack",
+			"typeVersion": 2.2,
+			"position": [840, 60]
+		}
+	],
+	"connections": {
+		"Every Monday 08:00": { "main": [[{ "node": "AI Agent", "type": "main", "index": 0 }]] },
+		"AI Agent": { "main": [[{ "node": "Render PDF", "type": "main", "index": 0 }]] },
+		"OpenAI Chat Model": {
+			"ai_languageModel": [[{ "node": "AI Agent", "type": "ai_languageModel", "index": 0 }]]
+		},
+		"Render PDF": { "main": [[{ "node": "EveryPage", "type": "main", "index": 0 }]] },
+		"EveryPage": { "main": [[{ "node": "Post link to Slack", "type": "main", "index": 0 }]] }
+	},
+	"active": false,
+	"settings": { "executionOrder": "v1" },
+	"pinData": {}
+}

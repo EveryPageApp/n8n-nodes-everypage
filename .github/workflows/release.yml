@@ -1,0 +1,28 @@
+# Publishes to npm with provenance via npm Trusted Publishers (OIDC) -
+# required for n8n Cloud verification since 2026-05. No npm token is
+# stored; configure this repo+workflow as a Trusted Publisher for the
+# package on npmjs.com (package settings -> Trusted Publishers).
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      - run: npm run build
+      - run: npm run lint
+      - run: npm test
+      - run: npm publish

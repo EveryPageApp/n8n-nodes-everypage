@@ -1,0 +1,89 @@
+{
+	"name": "EveryPage gated leads → CRM",
+	"nodes": [
+		{
+			"parameters": {
+				"content": "## Gated leads → CRM\nWhen a viewer completes the **email gate or lead-capture form** on a document (Pro), the signed webhook fires instantly and the captured fields land wherever your pipeline lives.\n\nReplace the Slack step with HubSpot / Pipedrive / Google Sheets — the lead's email is on `{{ $json.email }}`, the full form capture on `{{ $json.fields }}`.\n\n**Firewalled self-host?** Switch the trigger's mode to *Poll* — same events, pulled on a schedule.",
+				"height": 300,
+				"width": 400
+			},
+			"id": "b2c3d4e5-0000-4000-8000-000000000001",
+			"name": "Sticky Note",
+			"type": "n8n-nodes-base.stickyNote",
+			"typeVersion": 1,
+			"position": [-240, -220]
+		},
+		{
+			"parameters": {
+				"triggerMode": "webhook",
+				"events": ["gate.completed"],
+				"options": {}
+			},
+			"id": "b2c3d4e5-0000-4000-8000-000000000002",
+			"name": "EveryPage Trigger",
+			"type": "n8n-nodes-everypage.everyPageTrigger",
+			"typeVersion": 1,
+			"webhookId": "b2c3d4e5-aaaa-4bbb-8ccc-000000000099",
+			"position": [-240, 80]
+		},
+		{
+			"parameters": {
+				"assignments": {
+					"assignments": [
+						{
+							"id": "lead-email",
+							"name": "email",
+							"value": "={{ $json.email }}",
+							"type": "string"
+						},
+						{
+							"id": "lead-doc",
+							"name": "document",
+							"value": "={{ $json.fileName }}",
+							"type": "string"
+						},
+						{
+							"id": "lead-at",
+							"name": "capturedAt",
+							"value": "={{ $json.occurredAt }}",
+							"type": "string"
+						},
+						{
+							"id": "lead-fields",
+							"name": "formFields",
+							"value": "={{ JSON.stringify($json.fields ?? {}) }}",
+							"type": "string"
+						}
+					]
+				},
+				"options": {}
+			},
+			"id": "b2c3d4e5-0000-4000-8000-000000000003",
+			"name": "Shape the lead",
+			"type": "n8n-nodes-base.set",
+			"typeVersion": 3.4,
+			"position": [40, 80]
+		},
+		{
+			"parameters": {
+				"select": "channel",
+				"text": "=🎣 New lead: {{ $json.email }} just unlocked “{{ $json.document }}” ({{ $json.capturedAt }})",
+				"otherOptions": {}
+			},
+			"id": "b2c3d4e5-0000-4000-8000-000000000004",
+			"name": "Notify sales (replace with your CRM)",
+			"type": "n8n-nodes-base.slack",
+			"typeVersion": 2.2,
+			"position": [320, 80]
+		}
+	],
+	"connections": {
+		"EveryPage Trigger": { "main": [[{ "node": "Shape the lead", "type": "main", "index": 0 }]] },
+		"Shape the lead": {
+			"main": [[{ "node": "Notify sales (replace with your CRM)", "type": "main", "index": 0 }]]
+		}
+	},
+	"active": false,
+	"settings": { "executionOrder": "v1" },
+	"pinData": {}
+}
