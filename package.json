@@ -1,64 +1,64 @@
 {
-	"name": "n8n-nodes-everypage",
-	"version": "1.0.5",
-	"description": "n8n community node for EveryPage — turn any PDF in your workflow into a tracked share link, and trigger on reads, downloads, and lead-gate captures. GDPR-friendly analytics, no IPs stored.",
-	"keywords": [
-		"n8n-community-node-package",
-		"everypage",
-		"pdf",
-		"document tracking",
-		"pdf analytics",
-		"docsend alternative",
-		"tracked links",
-		"gdpr document sharing"
-	],
-	"license": "MIT",
-	"homepage": "https://everypage.co/integrations/n8n",
-	"author": {
-		"name": "EveryPage",
-		"email": "hello@everypage.co"
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/EveryPageApp/n8n-nodes-everypage.git"
-	},
-	"engines": {
-		"node": ">=20.15"
-	},
-	"main": "index.js",
-	"scripts": {
-		"build": "tsc && gulp build:icons",
-		"dev": "tsc --watch",
-		"format": "prettier nodes credentials --write",
-		"lint": "eslint nodes credentials package.json",
-		"lintfix": "eslint nodes credentials package.json --fix",
-		"prepublishOnly": "npm run build && npm run lint",
-		"test": "node --test test/*.test.mjs"
-	},
-	"files": [
-		"dist"
-	],
-	"n8n": {
-		"n8nNodesApiVersion": 1,
-		"credentials": [
-			"dist/credentials/EveryPageApi.credentials.js"
-		],
-		"nodes": [
-			"dist/nodes/EveryPage/EveryPage.node.js",
-			"dist/nodes/EveryPageTrigger/EveryPageTrigger.node.js"
-		]
-	},
-	"devDependencies": {
-		"@types/node": "^20.19.43",
-		"@typescript-eslint/parser": "^7.15.0",
-		"eslint": "^8.57.0",
-		"eslint-plugin-n8n-nodes-base": "^1.16.3",
-		"gulp": "^5.0.0",
-		"n8n-workflow": "~1.82.0",
-		"prettier": "^3.3.2",
-		"typescript": "^5.5.3"
-	},
-	"peerDependencies": {
-		"n8n-workflow": "*"
-	}
+  "name": "n8n-nodes-everypage",
+  "version": "1.0.6",
+  "description": "n8n community node for EveryPage \u2014 turn any PDF in your workflow into a tracked share link, and trigger on reads, downloads, and lead-gate captures. GDPR-friendly analytics, no IPs stored.",
+  "keywords": [
+    "n8n-community-node-package",
+    "everypage",
+    "pdf",
+    "document tracking",
+    "pdf analytics",
+    "docsend alternative",
+    "tracked links",
+    "gdpr document sharing"
+  ],
+  "license": "MIT",
+  "homepage": "https://everypage.co/integrations/n8n",
+  "author": {
+    "name": "EveryPage",
+    "email": "hello@everypage.co"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EveryPageApp/n8n-nodes-everypage.git"
+  },
+  "engines": {
+    "node": ">=20.15"
+  },
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc && gulp build:icons",
+    "dev": "tsc --watch",
+    "format": "prettier nodes credentials --write",
+    "lint": "eslint nodes credentials package.json",
+    "lintfix": "eslint nodes credentials package.json --fix",
+    "prepublishOnly": "npm run build && npm run lint",
+    "test": "node --test test/*.test.mjs"
+  },
+  "files": [
+    "dist"
+  ],
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/EveryPageApi.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/EveryPage/EveryPage.node.js",
+      "dist/nodes/EveryPageTrigger/EveryPageTrigger.node.js"
+    ]
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.43",
+    "@typescript-eslint/parser": "^7.15.0",
+    "eslint": "^8.57.0",
+    "eslint-plugin-n8n-nodes-base": "^1.16.3",
+    "gulp": "^5.0.0",
+    "n8n-workflow": "~1.82.0",
+    "prettier": "^3.3.2",
+    "typescript": "^5.5.3"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  }
 }
