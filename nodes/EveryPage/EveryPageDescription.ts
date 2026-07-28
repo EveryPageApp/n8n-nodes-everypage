@@ -550,7 +550,7 @@ export const variantFields: INodeProperties[] = [
 		type: 'boolean',
 		default: false,
 		description:
-			'Whether to redact the recipient label as part of deletion (GDPR erasure). The label is removed from readership history and cannot be re-set.',
+			'Whether to redact instead of delete (GDPR erasure): the recipient label is scrubbed in place from the variant, readership history, and stored webhook payloads, but the variant itself keeps working and its anonymised analytics survive. The label cannot be re-set afterwards. Leave off to remove the variant entirely.',
 		displayOptions: { show: { resource: ['variant'], operation: ['delete'] } },
 	},
 	// ----- getMany -----

@@ -376,9 +376,12 @@ export class EveryPage implements INodeType {
 							`/api/v1/files/${fileId}/variants/${variantUuid}`,
 							{ qs },
 						);
+						// Redact is an IN-PLACE label scrub, not a deletion: the variant
+						// (and its anonymised readership) survives. Only the plain path
+						// removes it. The output must not overstate what happened.
 						responseData = {
 							uuid: variantUuid,
-							deleted: true,
+							deleted: !redact,
 							redacted: redact,
 							parentUuid: fileId,
 						};
