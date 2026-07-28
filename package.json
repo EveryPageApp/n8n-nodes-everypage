@@ -15,7 +15,8 @@
 	"license": "MIT",
 	"homepage": "https://everypage.co/integrations/n8n",
 	"author": {
-		"name": "EveryPage"
+		"name": "EveryPage",
+		"email": "support@everypage.co"
 	},
 	"repository": {
 		"type": "git",
