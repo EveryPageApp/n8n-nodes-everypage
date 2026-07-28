@@ -8,7 +8,7 @@ import type {
 	INodeTypeDescription,
 } from 'n8n-workflow';
 import type { NodeConnectionType } from 'n8n-workflow';
-import { NodeOperationError } from 'n8n-workflow';
+import { NodeApiError, NodeOperationError } from 'n8n-workflow';
 
 import {
 	buildMultipartBody,
@@ -446,7 +446,14 @@ export class EveryPage implements INodeType {
 					});
 					continue;
 				}
-				throw error;
+				// everyPageApiRequest already throws NodeApiError; anything else
+				// (coding bugs, binary handling) gets wrapped so the raw error
+				// never crosses the node boundary.
+				const typedError =
+					error instanceof NodeOperationError || error instanceof NodeApiError
+						? error
+						: new NodeOperationError(this.getNode(), error as Error, { itemIndex: i });
+				throw typedError;
 			}
 		}
 

@@ -10,7 +10,8 @@ import type {
 	IWebhookFunctions,
 	IWebhookResponseData,
 } from 'n8n-workflow';
-import type { NodeConnectionType } from 'n8n-workflow';
+import type { JsonObject, NodeConnectionType } from 'n8n-workflow';
+import { NodeApiError } from 'n8n-workflow';
 
 import {
 	everyPageApiRequest,
@@ -34,6 +35,10 @@ export class EveryPageTrigger implements INodeType {
 		description:
 			'Starts a workflow when EveryPage documents are read, downloaded, gated, commented on, or burned - instantly via signed webhooks, or by polling for firewalled self-hosts',
 		defaults: { name: 'EveryPage Trigger' },
+		// n8n-workflow types this property as the literal `true` (false is not
+		// expressible), and the community-node linter requires it present.
+		// Triggers are never offered as AI-agent tools at runtime regardless.
+		usableAsTool: true,
 		inputs: [],
 		outputs: ['main'] as NodeConnectionType[],
 		credentials: [{ name: 'everyPageApi', required: true }],
@@ -263,7 +268,17 @@ export class EveryPageTrigger implements INodeType {
 							`/api/v1/webhooks/${staticData.webhookUuid as string}`,
 						);
 					} catch (error) {
-						if (!isNotFoundApiError(error)) throw error;
+						// A 404 means the subscription is already gone (deleted from the
+						// dashboard) - fine. Anything else propagates, wrapped if some
+						// non-API error ever lands here (the request helper only throws
+						// NodeApiError).
+						if (!isNotFoundApiError(error)) {
+							const typedError =
+								error instanceof NodeApiError
+									? error
+									: new NodeApiError(this.getNode(), error as JsonObject);
+							throw typedError;
+						}
 					}
 				}
 				delete staticData.webhookUuid;

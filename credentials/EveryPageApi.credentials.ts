@@ -2,6 +2,7 @@ import type {
 	IAuthenticateGeneric,
 	ICredentialTestRequest,
 	ICredentialType,
+	Icon,
 	INodeProperties,
 } from 'n8n-workflow';
 
@@ -14,6 +15,13 @@ export class EveryPageApi implements ICredentialType {
 	name = 'everyPageApi';
 
 	displayName = 'EveryPage API';
+
+	// Resolves within dist/: the gulp icon step copies the node SVGs, and the
+	// credential reuses them rather than shipping a duplicate.
+	icon: Icon = {
+		light: 'file:../nodes/EveryPage/everypage.svg',
+		dark: 'file:../nodes/EveryPage/everypage.dark.svg',
+	};
 
 	// eslint-disable-next-line n8n-nodes-base/cred-class-field-documentation-url-miscased
 	documentationUrl = 'https://everypage.co/developers';
