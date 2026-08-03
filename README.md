@@ -126,7 +126,7 @@ upgrade page. Size caps: Free 20 MiB, Basic 200 MiB, Pro 2 GiB. Rate limit:
 
 ```bash
 npm install
-npm run build     # tsc + gulp icon copy → dist/
+npm run build     # tsc + gulp icon/codex copy → dist/
 npm run lint      # eslint-plugin-n8n-nodes-base ruleset
 npm test          # node --test (signature verification + payload mapping)
 ```
