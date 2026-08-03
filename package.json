@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-everypage",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "n8n community node for EveryPage \u2014 turn any PDF in your workflow into a tracked share link, and trigger on reads, downloads, and lead-gate captures. GDPR-friendly analytics, no IPs stored.",
   "keywords": [
     "n8n-community-node-package",
@@ -27,7 +27,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "build": "tsc && gulp build:icons",
+    "build": "tsc && gulp build:assets",
     "dev": "tsc --watch",
     "format": "prettier nodes credentials --write",
     "lint": "eslint nodes credentials package.json",

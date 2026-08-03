@@ -1,7 +1,11 @@
 const path = require('path');
-const { task, src, dest } = require('gulp');
+const { task, src, dest, parallel } = require('gulp');
 
 task('build:icons', copyIcons);
+// tsc does not emit the codex files, and n8n reads `<Node>.node.json` from
+// alongside the compiled node — without this they never reach the package.
+task('build:codex', copyCodex);
+task('build:assets', parallel(copyIcons, copyCodex));
 
 function copyIcons() {
 	const nodeSource = path.resolve('nodes', '**', '*.{png,svg}');
@@ -13,4 +17,11 @@ function copyIcons() {
 	const credDestination = path.resolve('dist', 'credentials');
 
 	return src(credSource).pipe(dest(credDestination));
+}
+
+function copyCodex() {
+	const codexSource = path.resolve('nodes', '**', '*.node.json');
+	const codexDestination = path.resolve('dist', 'nodes');
+
+	return src(codexSource).pipe(dest(codexDestination));
 }
