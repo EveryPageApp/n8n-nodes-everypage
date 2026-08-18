@@ -1,7 +1,7 @@
 {
   "name": "n8n-nodes-everypage",
-  "version": "1.0.7",
-  "description": "n8n community node for EveryPage \u2014 turn any PDF in your workflow into a tracked share link, and trigger on reads, downloads, and lead-gate captures. GDPR-friendly analytics, no IPs stored.",
+  "version": "1.0.8",
+  "description": "n8n community node for EveryPage — turn any PDF in your workflow into a tracked share link, and trigger on reads, downloads, and lead-gate captures. GDPR-friendly analytics, no IPs stored.",
   "keywords": [
     "n8n-community-node-package",
     "everypage",

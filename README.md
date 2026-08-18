@@ -48,8 +48,17 @@ testing against a staging or self-hosted EveryPage deployment.
 | File | **Replace Content** (Pro) | Swap the PDF behind a link — UUID, short ID, slug, QR, settings, and readership history all survive |
 | File | **Get QR Code** | The tracked QR code as binary PNG (`everypage-{shortId}-qr.png`) for print/merge workflows |
 | File | **Get Readership** | The plan-shaped analytics report (summary, funnel, sessions, contacts…) as JSON |
+| File | **Get Page Marks** (Pro) | Readers' `pick` / `reject` / `maybe` verdicts — per-page tallies, a per-viewer breakdown, and document totals |
+| File | **Get Annotations** (Pro) | The annotations readers drew, grouped by page, with each reader's note |
 | Link Variant (Pro) | **Create / Get Many / Update / Revoke / Delete** | Per-recipient tracked links; delete supports GDPR label redaction. NOTE: variant `overrides` REPLACES the whole overrides object — never merges |
 | Event | **Get Many** | Bulk pulls from the events feed (`view` / `download` / `gate`) with a `since` cursor for incremental warehouse loads |
+
+**Proofing feedback is a pull, not a push.** `proofing.updated` fires once per
+viewer, on their first mark or annotation, and carries no verdicts — a reader
+marking 200 pages does not fire 200 webhooks. Trigger on it (or on
+`note.created`) and then read **Get Page Marks** / **Get Annotations**. Viewer
+identities in both responses are invitee email addresses for readers who came
+through an email invite, so treat the output as personal data.
 
 Every file-producing operation outputs the share trio alongside `uuid` and
 `shortId` — the same field names as the EveryPage Zapier app (the shared

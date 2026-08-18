@@ -228,10 +228,23 @@ export const fileOperations: INodeProperties[] = [
 				action: 'Get a document',
 			},
 			{
+				name: 'Get Annotations',
+				value: 'getAnnotations',
+				description: 'Get the annotations readers drew on a document, by page (Pro)',
+				action: 'Get document annotations',
+			},
+			{
 				name: 'Get Many',
 				value: 'getMany',
 				description: 'List your documents',
 				action: 'Get many documents',
+			},
+			{
+				name: 'Get Page Marks',
+				value: 'getPageMarks',
+				description:
+					"Get readers' pick/reject/maybe verdicts on a document's pages (Pro)",
+				action: 'Get document page marks',
 			},
 			{
 				name: 'Get QR Code',
@@ -323,7 +336,16 @@ export const fileFields: INodeProperties[] = [
 	},
 	// ----- document pickers -----
 	fileField(
-		['get', 'updateSettings', 'delete', 'replaceContent', 'getQrCode', 'getReadership'],
+		[
+			'get',
+			'updateSettings',
+			'delete',
+			'replaceContent',
+			'getQrCode',
+			'getReadership',
+			'getPageMarks',
+			'getAnnotations',
+		],
 		'file',
 	),
 	// ----- updateSettings surface -----

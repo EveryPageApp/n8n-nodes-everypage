@@ -292,6 +292,20 @@ export class EveryPage implements INodeType {
 							'GET',
 							`/api/v1/files/${fileId}/readership`,
 						)) as IDataObject;
+					} else if (operation === 'getPageMarks' || operation === 'getAnnotations') {
+						const fileId = this.getNodeParameter('file', i) as string;
+						// Proofing feedback (Pro). This is a PULL: proofing.updated fires
+						// once per viewer on their first mark and carries no verdicts, so
+						// the trigger tells you to come here, not what was decided.
+						// Viewer identities are invitee email addresses for readers who
+						// arrived through an email invite - personal data downstream.
+						const path =
+							operation === 'getPageMarks' ? 'page-marks' : 'annotations';
+						responseData = (await everyPageApiRequest.call(
+							this,
+							'GET',
+							`/api/v1/files/${fileId}/${path}`,
+						)) as IDataObject;
 					}
 				} else if (resource === 'variant') {
 					const fileId = this.getNodeParameter('file', i) as string;
