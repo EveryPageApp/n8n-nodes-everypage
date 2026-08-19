@@ -35,10 +35,6 @@ export class EveryPageTrigger implements INodeType {
 		description:
 			'Starts a workflow when EveryPage documents are read, downloaded, gated, commented on, or burned - instantly via signed webhooks, or by polling for firewalled self-hosts',
 		defaults: { name: 'EveryPage Trigger' },
-		// n8n-workflow types this property as the literal `true` (false is not
-		// expressible), and the community-node linter requires it present.
-		// Triggers are never offered as AI-agent tools at runtime regardless.
-		usableAsTool: true,
 		inputs: [],
 		outputs: ['main'] as NodeConnectionType[],
 		credentials: [{ name: 'everyPageApi', required: true }],
