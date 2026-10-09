@@ -33,7 +33,7 @@ export class EveryPageTrigger implements INodeType {
 		version: 1,
 		subtitle: '={{$parameter["triggerMode"] === "poll" ? "poll" : "instant"}}',
 		description:
-			'Starts a workflow when EveryPage documents are read, downloaded, gated, commented on, or burned - instantly via signed webhooks, or by polling for firewalled self-hosts',
+			'Starts a workflow when EveryPage documents are opened, read, downloaded, gated, commented on, or burned - instantly via signed webhooks, or by polling for firewalled self-hosts',
 		defaults: { name: 'EveryPage Trigger' },
 		inputs: [],
 		outputs: ['main'] as NodeConnectionType[],
@@ -91,6 +91,12 @@ export class EveryPageTrigger implements INodeType {
 						name: 'File Downloaded',
 						value: 'file.downloaded',
 						description: 'A reader (not you) saved one of your documents to disk',
+					},
+					{
+						name: 'File Opened',
+						value: 'file.opened',
+						description:
+							'A reader opened one of your documents - fires the moment the session starts, before File Viewed',
 					},
 					{
 						name: 'File Viewed',

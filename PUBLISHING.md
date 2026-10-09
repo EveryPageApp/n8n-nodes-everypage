@@ -9,7 +9,7 @@ nodes panel on n8n Cloud and marks it "verified" for self-hosts).
 ```bash
 npm run build   # tsc + icons, must be clean
 npm run lint    # zero errors
-npm test        # 31 tests green
+npm test        # 36 tests green
 ```
 
 Checklist (verification hard requirements, per docs.n8n.io as of 2026-07):

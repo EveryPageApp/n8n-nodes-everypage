@@ -3,7 +3,7 @@
 An [n8n](https://n8n.io) community node for [EveryPage](https://everypage.co) —
 turn any PDF in your workflow into a **tracked share link** with page-by-page
 reader analytics (GDPR-friendly: cookieless, no IPs stored), and trigger
-workflows the moment documents are read, downloaded, or unlock a lead gate.
+workflows the moment documents are opened, read, downloaded, or unlock a lead gate.
 
 The document-sharing node for people who read the source.
 
@@ -77,10 +77,15 @@ removes it on deactivation. Every delivery is verified — HMAC-SHA256
 signature (`X-Everypage-Signature`), 5-minute replay tolerance, constant-time
 comparison — and unverified deliveries are rejected with a 401.
 
-Events: `file.viewed`, `file.downloaded`, `gate.completed` (Pro at event
-time), `note.created`, `receipt.confirmed`, `file.burned`,
+Events: `file.opened`, `file.viewed`, `file.downloaded`, `gate.completed` (Pro
+at event time), `note.created`, `receipt.confirmed`, `file.burned`,
 `content.replaced`, `invite.viewed`, `proofing.updated`. Optionally scope the
 subscription to a single document.
+
+`file.opened` fires the moment a reader opens a document, before any page is
+read. `file.viewed` follows when their reading session ends and carries pages
+viewed and time spent. Both carry the same `sessionId`, so a workflow can pair
+them.
 
 **Poll mode (fallback):** for self-hosted n8n instances that cannot receive
 inbound webhooks. Walks the events feed on the schedule you set under Poll
